@@ -21,7 +21,7 @@ public class Orders {
     private Long id;
 
     @Column(name = "order_number", unique = true, nullable = false)
-    private String orderNumber;
+    private Long orderNumber;
     @Column(name = "customer_name", nullable = false)
     private String customerName;
     @Column(name = "customer_email", nullable = false)
@@ -33,17 +33,37 @@ public class Orders {
     private Address shippingAddress;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "order_status", nullable = false, length = 20)
     private OrderStatus orderStatus;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
-    @Column(name = "shipping_cost")
+    @Column(name = "shipping_cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal shippingCost;
 
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
+
+    @PrePersist
+    private void setCreatedAt() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
+    }
 
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,20 +18,24 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true, nullable = false)
-    private String slug;
+    @Column(nullable = false, length = 120)
     private String name;
     private String description;
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
-    @Column(name = "img_url")
+    @Column(name = "img_url", length = 255)
     private String imgUrl;
-    private boolean active;
-
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     private Category category;
+
     @ElementCollection
+    @CollectionTable(
+            name = "product_available_sizes",
+            joinColumns = @JoinColumn(name = "product_id")
+    )
     @Enumerated(EnumType.STRING)
-    private Set<Size> availableSizes;
+    @Column(name = "size", nullable = false, length = 2)
+    private Set<Size> availableSizes = new HashSet<>();
 
 }
