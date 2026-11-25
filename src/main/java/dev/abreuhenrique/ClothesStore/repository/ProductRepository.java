@@ -1,4 +1,7 @@
 package dev.abreuhenrique.ClothesStore.repository;
 
-public class ProductRepository {
+import dev.abreuhenrique.ClothesStore.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }
